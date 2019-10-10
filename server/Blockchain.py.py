@@ -85,11 +85,11 @@ def transaction(): #maybe parse the request to verify it's legit?????????
 
 		
 		this_nodes_transactions.append(new_txion)
-		#if (len(this_nodes_transactions) < 4):
-		#	return json.dumps({"response": ".ok!", "transactions": str(this_nodes_transactions)}) + '\n'#"Transaction submission successful." #remember to return something! Otherwise you get a code 500 and an error about an invalid return type
-		#else:
-		#	return mine()
-		return mine() #this means each block is 1 transaction, otherwise it'll wait for 4 and then you might overspend, and your transactions to users of this node's service won't be logged until there's 4 in the system...
+		if (len(this_nodes_transactions) < 4):#test this w multiple servers? Set up a system where all transactions are relayed to everyone or check if a new block is added, prune all transactions from this one that are in the new one then add
+			return json.dumps({"response": ".ok!", "transactions": str(this_nodes_transactions)}) + '\n'#"Transaction submission successful." #remember to return something! Otherwise you get a code 500 and an error about an invalid return type
+		else:
+			return mine()
+		#return mine() #this means each block is 1 transaction, otherwise it'll wait for 4 and then you might overspend, and your transactions to users of this node's service won't be logged until there's 4 in the system...
                 #NEED A SMARTER SOLUTION FOR THIS!!!!!!!!!!!!!!!
 
 
@@ -98,7 +98,7 @@ def transaction(): #maybe parse the request to verify it's legit?????????
 @node.route('/add', methods = ['POST']) #adds a normal block, if mined by another node
 def add_block():
 	if request.method == 'POST':
-		new_block = request.get_json() #idk if the json will manifest itself weird and have the block pakced into a data header or some shit but idk...
+		new_block = request.get_json() #i'm not sure if the json will manifest itself weird and have the block packed into a data header or something...
 		print new_block
 		hashy = new_block["last_hash"]
 		data = new_block["data"]
