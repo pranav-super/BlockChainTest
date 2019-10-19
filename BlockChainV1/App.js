@@ -24,19 +24,31 @@ import NewUser from './app/components/New User';
 
 const AppNavigator = createStackNavigator({
   login: {
-    screen: Login
+    screen: Login,
+    navigationOptions: {
+        header: null,
+    }
   },
 
   landing: {
-    screen: Landing
+    screen: Landing,
+    navigationOptions: {
+        headerStyle: {{backgroundColor: "#ddd2ce"}},
+    }
   },
 
   transaction: {
-    screen: Transaction
+    screen: Transaction,
+    navigationOptions: {
+        headerStyle: {{backgroundColor: "#ddd2ce"}},
+    }
   },
 
   newUser: {
-    screen: NewUser
+    screen: NewUser,
+    navigationOptions: {
+        headerStyle: {{backgroundColor: "#ddd2ce"}},
+    }
   }
 });
 

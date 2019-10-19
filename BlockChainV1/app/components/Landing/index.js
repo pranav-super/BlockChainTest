@@ -337,7 +337,7 @@ export default class Landing extends Component {
     return(
       <View style={styles.container}>
         <View style={styles.loginField}>
-          <Text>You have MC{this.state.total}</Text>
+          <Text>You have C{this.state.total}</Text>
           {cards}
           <TouchableOpacity onPress={() => this.handlePress()}>
             <Text>Make a transaction!</Text>
@@ -353,15 +353,45 @@ export default class Landing extends Component {
 }
 
 const styles = StyleSheet.create({
+
   container: {
+    backgroundColor: "#ddd2ce",
+    justifyContent: 'flex-start',
+    flex: 1
+  },
+
+  title: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: .8
+  },
+
+  titleText: {
+    fontFamily: "sans-serif-light",
+    backgroundColor: "#3f3f37",
+    color: "#dd977c",
+    fontSize: 35
+  },
+
+
+  loginContainer: {
+    //salignItems: 'center',
 
   },
 
   loginField: {
+    margin: 10
+  },
 
+  textField: {
+    margin: 10
   },
 
   button: {
-
+    alignItems: 'center',
+    backgroundColor: "#dd977c",
+    padding: 10,
+    margin: 10,
+    borderRadius: 3
   }
 });

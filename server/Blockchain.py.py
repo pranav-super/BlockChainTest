@@ -36,7 +36,7 @@ class Block: #this is defining each block, sorta like a linked list, but a lot m
 def genesis():
 	dictionary_json = {
 		"proof-of-work": 69,
-		"transactions": [{"to": "2cd03c3e54230e2d57a76f28e2cc5308", "from": "69man", "amount": 3}, {"to": "25man", "from": "2cd03c3e54230e2d57a76f28e2cc5308", "amount": 2}]#TESTING #["None."]
+		"transactions": [{"to": "2cd03c3e54230e2d57a76f28e2cc5308", "from": "9man", "amount": 3}, {"to": "25man", "from": "2cd03c3e54230e2d57a76f28e2cc5308", "amount": 2}]#TESTING #["None."]
 	}
 	return Block(0, date.datetime.now(), dictionary_json, "0")
 
@@ -139,8 +139,8 @@ def mine():
 	new_block_timestamp = this_timestamp = date.datetime.now()
 	last_block_hash = last_block.hash
 
-	#empty old transactions
-	this_nodes_transactions[:] = []
+	#empty old transactions, at least the last 4 ones if there are somehow 5 or more transactions, which is possible if timed perfectly
+	this_nodes_transactions[:4] = []
 
 	mined_block = Block(new_block_index, new_block_timestamp, new_block_data, last_block_hash)
 
@@ -213,6 +213,10 @@ def consensus(): #consensus is found by whoever has the longest chain
 		if (len(longest_chain) < len(chain)):
 			longest_chain = chain
 	blockchain = longest_chain
+	for block in blockchain:
+                for transaction in block["data"]["transactions"]:
+                        if transaction in this_nodes_transactions:
+                                this_nodes_transactions.remove(transaction) #if a transaction was sent to multiple nodes, we don't want double counting, in case one already added it to the blockchain!
 
 #idk when this method is executed ^^
 #@node. (nvm, i include it in the mine method)

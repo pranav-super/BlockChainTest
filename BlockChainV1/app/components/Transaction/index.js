@@ -232,15 +232,45 @@ export default class Transaction extends Component {
 
 
 const styles = StyleSheet.create({
+
   container: {
+    backgroundColor: "#ddd2ce",
+    justifyContent: 'flex-start',
+    flex: 1
+  },
+
+  title: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: .8
+  },
+
+  titleText: {
+    fontFamily: "sans-serif-light",
+    backgroundColor: "#3f3f37",
+    color: "#dd977c",
+    fontSize: 35
+  },
+
+
+  loginContainer: {
+    //salignItems: 'center',
 
   },
 
   loginField: {
+    margin: 10
+  },
 
+  textField: {
+    margin: 10
   },
 
   button: {
-
+    alignItems: 'center',
+    backgroundColor: "#dd977c",
+    padding: 10,
+    margin: 10,
+    borderRadius: 3
   }
 });
