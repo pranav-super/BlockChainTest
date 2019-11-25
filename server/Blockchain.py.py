@@ -83,7 +83,7 @@ def transaction(): #maybe parse the request to verify it's legit?????????
 
                 new_txion = b[0]
 
-		
+
 		this_nodes_transactions.append(new_txion)
 		if (len(this_nodes_transactions) < 4):#test this w multiple servers? Set up a system where all transactions are relayed to everyone or check if a new block is added, prune all transactions from this one that are in the new one then add
 			return json.dumps({"response": ".ok!", "transactions": str(this_nodes_transactions)}) + '\n'#"Transaction submission successful." #remember to return something! Otherwise you get a code 500 and an error about an invalid return type
@@ -105,8 +105,9 @@ def add_block():
 		index = new_block["index"]
 		timestamp = new_block["timestamp"]
 		blockchain.append(Block(index, timestamp,data, hashy))
+		consensus()
 
-miner_address = "sdwer3eq3623gx" #eventually, this will operate on a separate machine, and send its POW to localhost:5000/mine and that will verify it, then add it to the blockchain. For now, miners and nodes are one and the same. That might be the point though! So nvm. If miners are nodes as well, that incentivizes being a node.
+miner_address = "sdwer3eq3623gx" #this could operate on a separate machine, and send its POW to localhost:5000/mine and that will verify it, then add it to the blockchain. For now, miners and nodes are one and the same. That might be the point though! So nvm. If miners are nodes as well, that incentivizes being a node.
 #(address of this node, if nodes and miners are the same)
 
 
@@ -149,8 +150,8 @@ def mine():
 
         #print '\n'
         #for i in blockchain:
-        #        print str(i)       
-        
+        #        print str(i)
+
 	#send block to others
 	#do this by formatting the block as a dictionary, then as a json.
 	#then send
@@ -167,7 +168,7 @@ def mine():
 		"index": new_block_index,
 		"timestamp":str(new_block_timestamp),
 		"data": new_block_data,
-                "hash": mined_block.hash
+        "hash": mined_block.hash,
 		"last_hash": last_block_hash
 	}) + '\n'
 
@@ -186,7 +187,7 @@ def get_blocks(): #using this so that every node can get each other's blocks
 			"timestamp": block_timestamp,
 			"data": block_data,
 			"hash": block_hash,
-                        "last_hash": block.last_hash
+            "last_hash": block.previous_hash
 		} #formatting as a dictionary to easily convert to a json, this also implies that for eaches create aliases in pythons
                 chain_to_send.append(block)
         #print chain_to_send
@@ -216,7 +217,7 @@ def consensus(): #consensus is found by whoever has the longest chain
 	for block in blockchain:
                 for transaction in block["data"]["transactions"]:
                         if transaction in this_nodes_transactions:
-                                this_nodes_transactions.remove(transaction) #if a transaction was sent to multiple nodes, we don't want double counting, in case one already added it to the blockchain!
+                                this_nodes_transactions.remove(transaction) #if a transaction was sent to multiple nodes, we don't want double counting, in case one already added it to the blockchain! Even if I send two transactions with the same amount to the sam eperson, those will have different timestamps, so this works fine.
 
 #idk when this method is executed ^^
 #@node. (nvm, i include it in the mine method)
@@ -238,4 +239,3 @@ def propagate(block):
 		requests.post(node_url + '/add', json=json.dumps(json_block))
 CORS(node)
 node.run(host='0.0.0.0', threaded = True) #crucial, in case im like waiting 10 seconds and i get another block, or something like that, allows concurrent requests!!!
-

@@ -25,7 +25,7 @@ export default class Login extends Component {
   logIn() { //VERIFY USERNAME!
     var valid = false;
     //verify username & password
-    fetch ('http://10.74.50.170:3000/', {
+    fetch ('http://10.74.50.169:3000/', {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -56,7 +56,7 @@ export default class Login extends Component {
     //if valid:
       //send to landing
     //if not:
-      //fuck you you are cringe
+      //L
 
 
     /*//const username, password = this.state;

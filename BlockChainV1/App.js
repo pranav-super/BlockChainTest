@@ -33,21 +33,21 @@ const AppNavigator = createStackNavigator({
   landing: {
     screen: Landing,
     navigationOptions: {
-        headerStyle: {{backgroundColor: "#ddd2ce"}},
+        headerStyle: {backgroundColor: "#ddd2ce"},
     }
   },
 
   transaction: {
     screen: Transaction,
     navigationOptions: {
-        headerStyle: {{backgroundColor: "#ddd2ce"}},
+        headerStyle: {backgroundColor: "#ddd2ce"},
     }
   },
 
   newUser: {
     screen: NewUser,
     navigationOptions: {
-        headerStyle: {{backgroundColor: "#ddd2ce"}},
+        headerStyle: {backgroundColor: "#ddd2ce"},
     }
   }
 });

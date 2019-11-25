@@ -50,7 +50,7 @@ export default class Transaction extends Component {
 
     var hash = '';
 
-    fetch('http://10.74.50.170:3000/', {
+    fetch('http://10.74.50.169:3000/', {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -128,9 +128,13 @@ export default class Transaction extends Component {
 
   submit() {
     //if amount is invalid, recipient is invalid, address is empty, or amount is <= 0 or greater than
+
+    let date = new Date();
+    let timestamp = date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' - ' + date.getTimezoneOffset(); //https://aboutreact.com/react-native-get-current-date-time/, https://stackoverflow.com/questions/37552973/get-the-time-zone-with-react-native
+
     if(this.state.amount_validity && this.state.recipient_validity && this.state.recipient_address != '' && this.state.sent_amount > 0) {
-      //send an alert, saying something is wrong
-      fetch('http://10.74.50.170:5000/txion', {
+      fetch('http://10.74.50.169:5000/txion', { //optionally, could have this in a for loop and broadcast it to all nodes!
+        //POST REQUEST BABEY
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, cors, *same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -144,11 +148,15 @@ export default class Transaction extends Component {
         body: JSON.stringify({
           from: this.state.my_address,
           amount: this.state.sent_amount,
-          to: this.state.recipient_address
+          to: this.state.recipient_address,
+          time: timestamp //this is important to prevent double counting
         }), // body data type must match "Content-Type" header
       })
       .then(response => response.json())
-      .then(json => console.log(json));
+      .then(json => {
+        console.log(json);
+        Alert.alert("Transaction submitted!")
+      });
 
       this.setState({
         total: this.state.total - this.state.sent_amount,
@@ -157,9 +165,8 @@ export default class Transaction extends Component {
 
       this.verifyAmount(this.state.sent_amount); //this prevents someone mashing the button
     }
-    //else:
     else {
-      //POST REQUEST BABEY
+      //send an alert, saying something is wrong
       Alert.alert('Check your addresses and amounts!');
     }
   }
@@ -169,27 +176,57 @@ export default class Transaction extends Component {
 
   render() {
 
-    var happySad = (<View />);
+    var amountGood = (<View />);
     if (this.state.amount_validity) {
-      happySad = <Image source={require('../../assets/happy.png')} style={{width: 50, height: 50}}/>
+      amountGood = (<Image source={require('../../assets/good.png')} style={{width: 50, height: 50, flex: 0.2}}/>)
     }
     else {
-      happySad = <Image source={require('../../assets/sad.png')} style={{width: 50, height: 50}}/>
+      amountGood = (<Image source={require('../../assets/bad.png')} style={{width: 50, height: 50, flex: 0.2}}/>)
     }
 
+    var nameGood = (<View />);
+    if(this.state.recipient_validity) {
+      nameGood = (<Image source={require('../../assets/good.png')} style={{width: 50, height: 50, flex: 0.2}}/>)
+    }
+    else {
+      nameGood = (<Image source={require('../../assets/bad.png')} style={{width: 50, height: 50, flex: 0.2}}/>)
+    }
+
+    //var notAUserNoText = (<Image source={require('../../assets/bad.png')} style={{width: 50, height: 50, flex: 0.2}}/>);
 
     var toRender = (<View />);
     switch (this.state.toRender) {
       case '':
-        toRender = (<View />);
+        toRender = (
+        <View>
+          <View style={styles.disclaimerContainer}>
+            <Text style={styles.disclaimer}>The recipient of your payment is a user of our service:</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => this.setState({toRender: 'userOfOurService'})} style={styles.button}>
+            <Text>Yes.</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => this.setState({toRender: 'notAUserOfOurService'})} style={styles.button}>
+            <Text>No.</Text>
+          </TouchableOpacity>
+        </View>);
         break;
       case 'userOfOurService':
         toRender =
           (<View>
-            <TextInput placeholder={'Recipient Username'} onChangeText={(username) => this.searchForName(username)}/>
-            <TextInput placeholder={'Amount'} onChangeText={(amount) => this.verifyAmount(amount)}/>
-            {happySad}
-            <TouchableOpacity onPress={() => this.submit()}>
+            <View style={styles.disclaimerContainer}>
+              <Text style={styles.disclaimer}>Enter transaction details:</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <TextInput style={{flex: 0.8}} placeholder={'Recipient Username'} onChangeText={(username) => this.searchForName(username)}/>
+              {nameGood}
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <TextInput style={{flex: 0.8}} placeholder={'Amount'} onChangeText={(amount) => this.verifyAmount(amount)}/>
+              {amountGood}
+            </View>
+            <TouchableOpacity onPress={() => this.submit()} style={styles.button}>
               <Text>Submit!</Text>
             </TouchableOpacity>
           </View>);
@@ -197,10 +234,21 @@ export default class Transaction extends Component {
       case 'notAUserOfOurService':
         toRender =
           (<View>
-            <TextInput placeholder={'Recipient Address (be careful typing this!)'} onChangeText={(addy) => this.setState({recipient_address: addy, recipient_validity: true})}/>
-            <TextInput placeholder={'Amount'} onChangeText={(amount) => this.verifyAmount(amount)} />
-            {happySad}
-            <TouchableOpacity onPress={() => this.submit()}>
+            <View style={styles.disclaimerContainer}>
+              <Text style={styles.disclaimer}>Enter transaction details:</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <TextInput style={{flex:0.8}} placeholder={'Recipient Address (be careful typing this!)'} onChangeText={(addy) => {
+                this.setState({recipient_address: addy, recipient_validity: true});
+                //notAUserNoText = (<Image source={require('../../assets/good.png')} style={{width: 50, height: 50, flex: 0.2}}/>);
+              }}/>
+              {nameGood}
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <TextInput style={{flex:0.8}} placeholder={'Amount'} onChangeText={(amount) => this.verifyAmount(amount)} />
+              {amountGood}
+            </View>
+            <TouchableOpacity onPress={() => this.submit()} style={styles.button}>
               <Text>Submit!</Text>
             </TouchableOpacity>
           </View>);
@@ -213,14 +261,6 @@ export default class Transaction extends Component {
 
     return(
       <View style={styles.container}>
-        <Text>The recipient of your payment is a user of our service:</Text>
-        <TouchableOpacity onPress={() => this.setState({toRender: 'userOfOurService'})}>
-          <Text>Yes.</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => this.setState({toRender: 'notAUserOfOurService'})}>
-          <Text>No.</Text>
-        </TouchableOpacity>
 
         {toRender}
 
@@ -264,6 +304,22 @@ const styles = StyleSheet.create({
 
   textField: {
     margin: 10
+  },
+
+  disclaimerContainer: {
+    //flex: .8
+    margin: 10
+  },
+
+  disclaimer: {
+    padding: 5,
+    //margin: 10,
+    fontFamily: "sans-serif-light",
+    backgroundColor: "#3f3f37",
+    color: "#dd977c",
+    alignItems: "center",
+    justifyContent: "center",
+    //flex: .8
   },
 
   button: {

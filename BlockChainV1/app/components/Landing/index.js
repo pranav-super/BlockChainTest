@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, TextInput, StyleSheet, Image } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, StyleSheet, Image, ScrollView } from 'react-native';
 //import murmur from 'murmur-hash-js'
 
 export default class Landing extends Component {
@@ -58,12 +58,12 @@ export default class Landing extends Component {
     var total = 0;
     var myTransactions = [];
     //NOT SURE WHY I HAVE TO MAKE THIS A RETURN, INSTEAD OF JUST LEAVING IT AS A NORMAL STATEMENT, BECAUSE IT EXITS THIS METHOD ANYWAYS...
-    /*const fet = fetch('http://10.74.50.170:5000/blocks') //lol its http
+    /*const fet = fetch('http://10.74.50.169:5000/blocks') //lol its http
     console.log(fet);*/
 
     var finalTransactions = [];
 
-    await fetch('http://10.74.50.170:5000/blocks') //MOVE THIS TO RENDER?????
+    await fetch('http://10.74.50.169:5000/blocks') //MOVE THIS TO RENDER?????
       .then(response => response.json()) //returns a promise, which is then interpreted below as responseJSON.
       .then((json) => {
         console.log(json);
@@ -130,7 +130,7 @@ export default class Landing extends Component {
       loading: false
     });
     /*const options = {
-      hostname: 'http://10.74.50.170',
+      hostname: 'http://10.74.50.169',
       port: 5000,
       path: '/blocks',
       method: 'GET',
@@ -199,7 +199,7 @@ export default class Landing extends Component {
 
     var finalTransactions = [];
 
-    await fetch('http://10.74.50.170:5000/blocks')
+    await fetch('http://10.74.50.169:5000/blocks')
       .then(response => response.json()) //returns a promise, which is then interpreted below as responseJSON.
       .then((json) => {
         console.log(json);
@@ -267,7 +267,7 @@ export default class Landing extends Component {
   async findUserByHash(hash) {
     //make a fetch to the API, and if the status is "no user", return the hash
     var returnValue = hash;
-    await fetch('http://10.74.50.170:3000/', {
+    await fetch('http://10.74.50.169:3000/', {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
@@ -317,10 +317,10 @@ export default class Landing extends Component {
     var cards = [];
     transactions.forEach((transaction, index) => {
       cards.push(
-        <View key={index}>
-          <Text>To: {transaction.to}</Text>
-          <Text>From: {transaction.from}</Text>
-          <Text>Amount: {transaction.amount}</Text>
+        <View key={index} style={styles.transaction}>
+          <Text style={styles.transactionText}>To: {transaction.to}</Text>
+          <Text style={styles.transactionText}>From: {transaction.from}</Text>
+          <Text style={styles.transactionText}>Amount: {transaction.amount}</Text>
         </View>
       );
     });
@@ -336,17 +336,23 @@ export default class Landing extends Component {
 
     return(
       <View style={styles.container}>
-        <View style={styles.loginField}>
-          <Text>You have C{this.state.total}</Text>
-          {cards}
-          <TouchableOpacity onPress={() => this.handlePress()}>
-            <Text>Make a transaction!</Text>
-          </TouchableOpacity>
+          <View style={styles.youHave}>
+            <Text>You have ε{this.state.total}</Text>
+          </View>
 
-          <TouchableOpacity onPress={() => this.refresh()}>
-            <Text>Refresh.</Text>
-          </TouchableOpacity>
-        </View>
+          <ScrollView style={{margin: 10, flex: 1}}>
+            {cards}
+          </ScrollView>
+
+          <View style={{flex: .3}}>
+            <TouchableOpacity onPress={() => this.handlePress()} style={styles.button}>
+              <Text>Make a transaction!</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => this.refresh()} style={styles.button}>
+              <Text>Refresh.</Text>
+            </TouchableOpacity>
+          </View>
       </View>
     );
   }
@@ -360,10 +366,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
 
-  title: {
+  youHave: {
     alignItems: "center",
     justifyContent: "center",
-    flex: .8
+    flex: 0.05,
+    margin: 10
   },
 
   titleText: {
@@ -393,5 +400,16 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 3
+  },
+
+  transaction: {
+    margin: 10,
+    backgroundColor: "#3f3f37",
+    padding: 5,
+    borderRadius: 2
+  },
+
+  transactionText: {
+    color: "#dd977c"
   }
 });

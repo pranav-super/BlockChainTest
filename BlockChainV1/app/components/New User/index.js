@@ -31,7 +31,7 @@ export default class NewUser extends Component {
     if (this.state.usernameValid && this.state.passwordValid) {
       const murmurHash = murmurHash3.x64.hash128(this.state.username + "&&" + this.state.password);
 
-      fetch('http://10.74.50.170:3000/', {
+      fetch('http://10.74.50.169:3000/', {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
@@ -81,7 +81,7 @@ export default class NewUser extends Component {
     //check w database, see if username is ok!
 
     //send a POST request to the server rest API
-    fetch('http://10.74.50.170:3000/', {
+    fetch('http://10.74.50.169:3000/', {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       mode: 'cors', // no-cors, cors, *same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -165,15 +165,21 @@ export default class NewUser extends Component {
 
   render() {
     return(
-      <View>
+      <View style={styles.container}>
 
-        <TextInput placeholder={'Username'} onChangeText={(text) => this.verifyUsername(text)} />
+        <View style={styles.loginContainer}>
+          <TextInput placeholder={'Username'} onChangeText={(text) => this.verifyUsername(text)} style={styles.textField}/>
 
-        <TextInput placeholder={'Password'} onChangeText={(text) => this.verifyPassword(text)} />
+          <TextInput placeholder={'Password'} onChangeText={(text) => this.verifyPassword(text)} style={styles.textField}/>
 
-        <TouchableOpacity onPress={() => this.submit()}>
-          <Text> Submit! </Text>
-        </TouchableOpacity>
+          <View style={styles.disclaimerContainer}>
+            <Text style={styles.disclaimer}>The account name you choose will become your address for all future transactions through both this wallet, and with "COIN." in general.</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => this.submit()} style={styles.button}>
+            <Text> Submit! </Text>
+          </TouchableOpacity>
+        </View>
 
       </View>
     );
@@ -213,6 +219,22 @@ const styles = StyleSheet.create({
 
   textField: {
     margin: 10
+  },
+
+  disclaimerContainer: {
+    //flex: .8
+    margin: 10
+  },
+
+  disclaimer: {
+    padding: 5,
+    //margin: 10,
+    fontFamily: "sans-serif-light",
+    backgroundColor: "#3f3f37",
+    color: "#dd977c",
+    alignItems: "center",
+    justifyContent: "center",
+    //flex: .8
   },
 
   button: {
